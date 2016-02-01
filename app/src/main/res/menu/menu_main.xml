@@ -3,8 +3,13 @@
       xmlns:tools="http://schemas.android.com/tools"
       tools:context="me.sudar.moviemaster.MainActivity">
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_pop_movies"
         android:orderInCategory="100"
-        android:title="@string/action_settings"
+        android:title="@string/popular_movies"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/action_high_rated_movies"
+        android:orderInCategory="100"
+        android:title="@string/high_rated_movies"
         app:showAsAction="never"/>
 </menu>

@@ -22,21 +22,12 @@ public class MovieGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view =  inflater.inflate(R.layout.fragment_main, container, false);
 
-
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_grid_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         int gridLayoutSpanCount = 2;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), gridLayoutSpanCount);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        List<Movie> movies = new ArrayList<>();
-        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
-        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
-        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
-        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
-        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
-        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
-        mRecyclerView.setAdapter(new MovieGridAdapter(movies));
-
+        mRecyclerView.setAdapter(MovieMasterApplication.movieGridAdapter);
         return view;
     }
 }

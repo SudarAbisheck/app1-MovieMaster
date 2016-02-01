@@ -8,7 +8,10 @@ import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import me.sudar.moviemaster.network.TmDbService;
 
 /**
  * Created by sudar on 1/2/16.
@@ -17,6 +20,10 @@ import java.util.List;
 public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     List<Movie> movies;
+
+    public MovieGridAdapter(){
+        this.movies = new ArrayList<>();
+    }
 
     public MovieGridAdapter(List<Movie> movies){
         this.movies = movies;
@@ -31,7 +38,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         Picasso.with(holder.moviePoster.getContext())
-                .load(movies.get(position).moviePosterUrl)
+                .load(TmDbService.IMAGE_BASE_URL + movies.get(position).getPosterPath())
                 .into(holder.moviePoster);
         holder.gridItemCardView.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -44,5 +51,11 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     @Override
     public int getItemCount() {
         return movies.size();
+    }
+
+    public void updateData(List<Movie> movies){
+        this.movies.clear();
+        this.movies.addAll(movies);
+        notifyDataSetChanged();
     }
 }
