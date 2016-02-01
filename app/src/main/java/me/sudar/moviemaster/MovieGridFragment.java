@@ -2,13 +2,16 @@ package me.sudar.moviemaster;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+import java.util.ArrayList;
+import java.util.List;
+
+
 public class MovieGridFragment extends Fragment {
 
     public MovieGridFragment() {
@@ -17,6 +20,23 @@ public class MovieGridFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_main, container, false);
+        View view =  inflater.inflate(R.layout.fragment_main, container, false);
+
+
+        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_grid_recycler_view);
+        mRecyclerView.setHasFixedSize(true);
+        int gridLayoutSpanCount = 2;
+        GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), gridLayoutSpanCount);
+        mRecyclerView.setLayoutManager(gridLayoutManager);
+        List<Movie> movies = new ArrayList<>();
+        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
+        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
+        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
+        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
+        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
+        movies.add(new Movie("http://i.imgur.com/DvpvklR.png"));
+        mRecyclerView.setAdapter(new MovieGridAdapter(movies));
+
+        return view;
     }
 }
