@@ -32,7 +32,7 @@ public class TmDbService {
 
     public interface TmDbApi{
 
-        String apiKey = "7924f2e5b79cb7059938deaae869fc2f";
+        String apiKey = "_YOUR_API_KEY_GOES_HERE_";
 
         @GET("/3/discover/movie?sort_by=popularity.desc&api_key=" + apiKey)
         Observable<ApiCallReply> getPopularMovies();
