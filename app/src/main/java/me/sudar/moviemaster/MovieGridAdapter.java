@@ -39,6 +39,8 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     public void onBindViewHolder(MovieViewHolder holder, int position) {
         Picasso.with(holder.moviePoster.getContext())
                 .load(TmDbService.IMAGE_BASE_URL + movies.get(position).getPosterPath())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder)
                 .into(holder.moviePoster);
         holder.gridItemCardView.setOnClickListener(new View.OnClickListener() {
             @Override

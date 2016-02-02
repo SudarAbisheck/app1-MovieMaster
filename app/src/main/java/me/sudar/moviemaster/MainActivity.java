@@ -19,7 +19,6 @@ import rx.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
 
-    private MovieGridAdapter movieGridAdapter;
     private SharedPreferences sp;
     private MenuItem popMovieMenu;
     private MenuItem highRatedMenu;
@@ -32,9 +31,6 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         sp = getSharedPreferences("MovieMaster", Context.MODE_PRIVATE);
-        int option = sp.getInt("MovieListOption",0);
-        if(option == 0) loadPopularMovies();
-        else if(option == 1) loadHighRatedMovies();
     }
 
     @Override
@@ -42,9 +38,15 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         popMovieMenu = menu.findItem(R.id.action_pop_movies);
         highRatedMenu = menu.findItem(R.id.action_high_rated_movies);
-        int option = sp.getInt("MovieListOption",0);
-        if(option == 0) popMovieMenu.setEnabled(false);
-        else if(option == 1) highRatedMenu.setEnabled(false);
+        int option = sp.getInt("MovieListOption", 0);
+        if(option == 0) {
+            popMovieMenu.setEnabled(false);
+            loadPopularMovies();
+        }
+        else if(option == 1) {
+            highRatedMenu.setEnabled(false);
+            loadHighRatedMovies();
+        }
         return true;
     }
 
