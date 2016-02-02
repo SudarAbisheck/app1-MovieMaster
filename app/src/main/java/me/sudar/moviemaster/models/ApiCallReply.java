@@ -1,4 +1,4 @@
-package me.sudar.moviemaster;
+package me.sudar.moviemaster.models;
 
 import java.util.ArrayList;
 import java.util.List;

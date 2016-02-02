@@ -1,17 +1,18 @@
-package me.sudar.moviemaster;
+package me.sudar.moviemaster.activities;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
+import me.sudar.moviemaster.models.ApiCallReply;
+import me.sudar.moviemaster.MovieMasterApplication;
+import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.network.TmDbService;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;

@@ -1,4 +1,4 @@
-package me.sudar.moviemaster;
+package me.sudar.moviemaster.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
@@ -11,6 +11,8 @@ import com.squareup.picasso.Picasso;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.sudar.moviemaster.R;
+import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.network.TmDbService;
 
 /**

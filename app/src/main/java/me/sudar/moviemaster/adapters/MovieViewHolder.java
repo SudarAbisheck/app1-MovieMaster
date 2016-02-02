@@ -1,10 +1,12 @@
-package me.sudar.moviemaster;
+package me.sudar.moviemaster.adapters;
 
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+
+import me.sudar.moviemaster.R;
 
 /**
  * Created by sudar on 1/2/16.

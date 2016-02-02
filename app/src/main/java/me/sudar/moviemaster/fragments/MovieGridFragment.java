@@ -1,4 +1,4 @@
-package me.sudar.moviemaster;
+package me.sudar.moviemaster.fragments;
 
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -10,6 +10,9 @@ import android.view.ViewGroup;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import me.sudar.moviemaster.MovieMasterApplication;
+import me.sudar.moviemaster.R;
 
 
 public class MovieGridFragment extends Fragment {

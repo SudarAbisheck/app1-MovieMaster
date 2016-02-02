@@ -1,6 +1,6 @@
 package me.sudar.moviemaster.network;
 
-import me.sudar.moviemaster.ApiCallReply;
+import me.sudar.moviemaster.models.ApiCallReply;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.RxJavaCallAdapterFactory;
