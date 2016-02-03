@@ -3,4 +3,11 @@
     <string name="movie_poster">Movie Poster</string>
     <string name="high_rated_movies">High Rated Movies</string>
     <string name="popular_movies">Popular Movies</string>
+    <string name="title_activity_details">Movie Details</string>
+    <string name="action_settings">Settings</string>
+    <string name="backdrop_image">Backdrop Image</string>
+    <string name="rating_string">%1$s / 10</string>
+    <string name="running_time_string">%1$d min</string>
+    <string name="release_year_string">%1$d</string>
+    <string name="internet_error_message">Failed to receive Information.\nCheck your Internet Connection</string>
 </resources>

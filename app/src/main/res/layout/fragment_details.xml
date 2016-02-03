@@ -1,0 +1,67 @@
+<android.support.v4.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                tools:context=".fragments.DetailsActivityFragment"
+                tools:showIn="@layout/activity_details">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="16dp">
+        <ImageView
+            android:id="@+id/poster_image_view"
+            android:layout_width="0dp"
+            android:layout_height="250dp"
+            android:layout_weight="0.5"
+            android:src="@drawable/placeholder"
+            android:scaleType="fitCenter"
+            android:contentDescription="@string/movie_poster"/>
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.5"
+            android:gravity="center_vertical"
+            android:orientation="vertical"
+            android:padding="16dp">
+            <TextView
+                android:id="@+id/release_year_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/release_year_string"
+                android:textSize="24sp"
+                android:textStyle="bold"
+                android:paddingBottom="10dp"/>
+            <!--<TextView-->
+                <!--android:id="@+id/running_time_text_view"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:text="@string/running_time_string"-->
+                <!--android:textSize="22sp"-->
+                <!--android:textStyle="italic"-->
+                <!--android:paddingBottom="10dp"/>-->
+            <TextView
+                android:id="@+id/rating_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/rating_string"
+                android:textSize="16sp"
+                android:textStyle="bold"/>
+        </LinearLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/plot_text_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp"/>
+
+
+
+    </LinearLayout>
+</android.support.v4.widget.NestedScrollView>

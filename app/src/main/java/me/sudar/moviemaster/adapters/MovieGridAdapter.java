@@ -1,5 +1,7 @@
 package me.sudar.moviemaster.adapters;
 
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +14,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import me.sudar.moviemaster.R;
+import me.sudar.moviemaster.activities.DetailsActivity;
+import me.sudar.moviemaster.activities.MainActivity;
 import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.network.TmDbService;
 
@@ -38,7 +42,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MovieViewHolder holder, int position) {
+    public void onBindViewHolder(MovieViewHolder holder, final int position) {
         Picasso.with(holder.moviePoster.getContext())
                 .load(TmDbService.IMAGE_BASE_URL + movies.get(position).getPosterPath())
                 .placeholder(R.drawable.placeholder)
@@ -47,7 +51,11 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         holder.gridItemCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Toast.makeText(v.getContext(), "Clicked !!", Toast.LENGTH_SHORT).show();
+                Bundle data = new Bundle();
+                data.putSerializable("MOVIE", movies.get(position));
+                Intent intent = new Intent(v.getContext(), DetailsActivity.class);
+                intent.putExtra("DATA",data);
+                v.getContext().startActivity(intent);
             }
         });
     }

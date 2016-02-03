@@ -8,6 +8,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 
 
 import me.sudar.moviemaster.models.ApiCallReply;
@@ -67,6 +68,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadPopularMovies(){
+        findViewById(R.id.errorView).setVisibility(View.GONE);
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        findViewById(R.id.movie_grid_recycler_view).setVisibility(View.INVISIBLE);
         TmDbService
                 .getService()
                 .getPopularMovies()
@@ -78,11 +82,15 @@ public class MainActivity extends AppCompatActivity {
                         popMovieMenu.setEnabled(false);
                         highRatedMenu.setEnabled(true);
                         sp.edit().putInt("MovieListOption",0).apply();
+                        findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.movie_grid_recycler_view).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.errorView).setVisibility(View.VISIBLE);
                     }
 
                     @Override
@@ -94,6 +102,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void loadHighRatedMovies(){
+        findViewById(R.id.errorView).setVisibility(View.GONE);
+        findViewById(R.id.progressBar).setVisibility(View.VISIBLE);
+        findViewById(R.id.movie_grid_recycler_view).setVisibility(View.INVISIBLE);
         TmDbService
                 .getService()
                 .getHighRatedMovies()
@@ -105,11 +116,15 @@ public class MainActivity extends AppCompatActivity {
                         popMovieMenu.setEnabled(true);
                         highRatedMenu.setEnabled(false);
                         sp.edit().putInt("MovieListOption",1).apply();
+                        findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-
+                        findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.movie_grid_recycler_view).setVisibility(View.INVISIBLE);
+                        findViewById(R.id.errorView).setVisibility(View.VISIBLE);
                     }
 
                     @Override
