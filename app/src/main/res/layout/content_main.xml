@@ -1,4 +1,4 @@
-<fragment android:id="@+id/fragment"
+<fragment android:id="@+id/movie_grid_fragment"
           android:name="me.sudar.moviemaster.fragments.MovieGridFragment"
           xmlns:android="http://schemas.android.com/apk/res/android"
           xmlns:app="http://schemas.android.com/apk/res-auto"

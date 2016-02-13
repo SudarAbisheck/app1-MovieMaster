@@ -1,5 +1,8 @@
 package me.sudar.moviemaster.models;
 
+import android.os.Parcel;
+import android.os.Parcelable;
+
 import java.util.ArrayList;
 import java.util.List;
 //import javax.annotation.Generated;
@@ -7,7 +10,7 @@ import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
 //@Generated("org.jsonschema2pojo")
-public class ApiCallReply {
+public class ApiCallReply implements Parcelable {
 
     @SerializedName("page")
     @Expose
@@ -94,4 +97,36 @@ public class ApiCallReply {
         this.totalPages = totalPages;
     }
 
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeValue(this.page);
+        dest.writeTypedList(movies);
+        dest.writeValue(this.totalMovies);
+        dest.writeValue(this.totalPages);
+    }
+
+    public ApiCallReply() {
+    }
+
+    protected ApiCallReply(Parcel in) {
+        this.page = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.movies = in.createTypedArrayList(Movie.CREATOR);
+        this.totalMovies = (Integer) in.readValue(Integer.class.getClassLoader());
+        this.totalPages = (Integer) in.readValue(Integer.class.getClassLoader());
+    }
+
+    public static final Parcelable.Creator<ApiCallReply> CREATOR = new Parcelable.Creator<ApiCallReply>() {
+        public ApiCallReply createFromParcel(Parcel source) {
+            return new ApiCallReply(source);
+        }
+
+        public ApiCallReply[] newArray(int size) {
+            return new ApiCallReply[size];
+        }
+    };
 }

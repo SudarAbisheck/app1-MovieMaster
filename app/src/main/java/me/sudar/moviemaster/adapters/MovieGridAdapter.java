@@ -52,7 +52,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
             @Override
             public void onClick(View v) {
                 Bundle data = new Bundle();
-                data.putSerializable("MOVIE", movies.get(position));
+                data.putParcelable("MOVIE",movies.get(position));
                 Intent intent = new Intent(v.getContext(), DetailsActivity.class);
                 intent.putExtra("DATA",data);
                 v.getContext().startActivity(intent);
@@ -70,4 +70,6 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         this.movies.addAll(movies);
         notifyDataSetChanged();
     }
+
+    public List<Movie> getData(){ return this.movies; }
 }

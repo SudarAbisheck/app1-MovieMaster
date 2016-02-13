@@ -16,6 +16,7 @@ public class TmDbService {
     private static final String BASE_URL = "http://api.themoviedb.org";
 
     public static final String IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w185";
+    public static final String BACKDROP_IMAGE_BASE_URL = "http://image.tmdb.org/t/p/w500";
 
     private TmDbService(){}
 

@@ -9,5 +9,5 @@ import me.sudar.moviemaster.adapters.MovieGridAdapter;
  * Email : hey@sudar.me
  */
 public class MovieMasterApplication extends Application {
-    public static MovieGridAdapter movieGridAdapter = new MovieGridAdapter();
+    public static int selectedMenu = 0 ;
 }
