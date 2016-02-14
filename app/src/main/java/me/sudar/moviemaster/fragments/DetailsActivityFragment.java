@@ -2,10 +2,13 @@ package me.sudar.moviemaster.fragments;
 
 import android.app.Activity;
 import android.support.annotation.Nullable;
+import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -21,6 +24,7 @@ import java.util.ArrayList;
 import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.adapters.TrailerListAdapter;
 import me.sudar.moviemaster.models.Movie;
+import me.sudar.moviemaster.models.Review;
 import me.sudar.moviemaster.models.ReviewReply;
 import me.sudar.moviemaster.models.Trailer;
 import me.sudar.moviemaster.models.TrailerReply;
@@ -29,16 +33,17 @@ import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
 
-/**
- * A placeholder fragment containing a simple view.
- */
+
 public class DetailsActivityFragment extends Fragment {
 
     private View view;
     private LinearLayout trailerContainer;
+    private LinearLayout reviewContainer;
+    private LinearLayout reviewListLL;
 
     private TrailerListAdapter trailerListAdapter;
     private ArrayList<Trailer> trailerList = new ArrayList<>();
+    private ArrayList<Review> reviewList = new ArrayList<>();
 
     public DetailsActivityFragment() {
     }
@@ -52,6 +57,9 @@ public class DetailsActivityFragment extends Fragment {
         trailerListView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
         trailerListAdapter = new TrailerListAdapter();
         trailerListView.setAdapter(trailerListAdapter);
+
+        reviewContainer = (LinearLayout) view.findViewById(R.id.review_container);
+        reviewListLL = (LinearLayout) view.findViewById(R.id.review_list_linear_layout);
         return view;
     }
 
@@ -106,10 +114,7 @@ public class DetailsActivityFragment extends Fragment {
 
                     @Override
                     public void onNext(TrailerReply trailerReply) {
-//                        trailerListAdapter.updateData((ArrayList<Trailer>) trailerReply.getTrailers());
                         trailerList = (ArrayList<Trailer>) trailerReply.getTrailers();
-//                        for(int i =0; i<trailerList.size(); i++)
-//                            Log.i("TTTTT", trailerList.get(i).getName());
                         trailerListAdapter.updateData(trailerList);
                     }
                 });
@@ -126,23 +131,27 @@ public class DetailsActivityFragment extends Fragment {
                 .subscribe(new Subscriber<ReviewReply>() {
                     @Override
                     public void onCompleted() {
-                        Log.i("TTTTTTTTTTT","COMPLETED");
-//                        if(trailerList.size() > 0)
-//                            trailerContainer.setVisibility(View.VISIBLE);
+                        if(reviewList.size() > 0)
+                            reviewContainer.setVisibility(View.VISIBLE);
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.i("TTTTTTTTTTT","FAILED: " + e.getMessage() + "PPPP");
                     }
 
                     @Override
                     public void onNext(ReviewReply reviewReply) {
-//                        trailerListAdapter.updateData((ArrayList<Trailer>) trailerReply.getTrailers());
-//                        trailerList = (ArrayList<Trailer>) trailerReply.getTrailers();
-//                        for(int i =0; i<trailerList.size(); i++)
-//                            Log.i("TTTTT", trailerList.get(i).getName());
-//                        trailerListAdapter.updateData(trailerList);
+                        reviewList = (ArrayList<Review>) reviewReply.getReviews();
+
+                        for(int i = 0; i< reviewList.size(); i++) {
+                            String raw = String.format(getString(R.string.review_author_string),reviewList.get(i).getAuthor());
+
+                            CardView cv = (CardView) LayoutInflater.from(view.getContext()).inflate(R.layout.review_item_layout, reviewListLL, false);
+                            ((TextView) cv.findViewById(R.id.review_author_tv)).setText(Html.fromHtml(raw));
+                            ((TextView) cv.findViewById(R.id.review_content_tv)).setText(reviewList.get(i).getContent());
+
+                            reviewListLL.addView(cv);
+                        }
                     }
                 });
 

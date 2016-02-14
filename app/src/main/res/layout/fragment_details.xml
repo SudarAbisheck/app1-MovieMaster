@@ -97,6 +97,7 @@
             android:id="@+id/review_container"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:visibility="gone"
             android:orientation="vertical">
             <FrameLayout
                 android:layout_width="match_parent"
@@ -112,10 +113,11 @@
                 android:text="@string/reviews"
                 android:textSize="22sp"
                 android:textStyle="bold"/>
-            <ListView
-                android:id="@+id/review_list_view"
+            <LinearLayout
+                android:id="@+id/review_list_linear_layout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:orientation="vertical"
                 android:paddingLeft="7dp"
                 android:paddingRight="7dp"/>
         </LinearLayout>

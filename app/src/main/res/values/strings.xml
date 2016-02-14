@@ -13,4 +13,5 @@
     <string name="trailers">Trailers :</string>
     <string name="reviews">Reviews :</string>
     <string name="trailer_play_image">Trailer Play Image</string>
+    <string name="review_author_string"><![CDATA[<b>%1$s</b> <i>says :</i>]]></string>
 </resources>
