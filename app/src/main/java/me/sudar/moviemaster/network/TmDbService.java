@@ -1,10 +1,13 @@
 package me.sudar.moviemaster.network;
 
 import me.sudar.moviemaster.models.ApiCallReply;
+import me.sudar.moviemaster.models.ReviewReply;
+import me.sudar.moviemaster.models.TrailerReply;
 import retrofit2.GsonConverterFactory;
 import retrofit2.Retrofit;
 import retrofit2.RxJavaCallAdapterFactory;
 import retrofit2.http.GET;
+import retrofit2.http.Path;
 import rx.Observable;
 
 /**
@@ -40,6 +43,12 @@ public class TmDbService {
 
         @GET("/3/discover/movie?sort_by=vote_average.desc&api_key=" + apiKey)
         Observable<ApiCallReply> getHighRatedMovies();
+
+        @GET("/3/movie/{id}/videos?api_key=" + apiKey)
+        Observable<TrailerReply> getTrailers(@Path("id") Integer id);
+
+        @GET("/3/movie/{id}/reviews?api_key=" + apiKey)
+        Observable<ReviewReply> getReviews(@Path("id") Integer id);
     }
 
 }

@@ -10,4 +10,7 @@
     <string name="running_time_string">%1$d min</string>
     <string name="release_year_string">%1$d</string>
     <string name="internet_error_message">Failed to receive Information.\nCheck your Internet Connection</string>
+    <string name="trailers">Trailers :</string>
+    <string name="reviews">Reviews :</string>
+    <string name="trailer_play_image">Trailer Play Image</string>
 </resources>

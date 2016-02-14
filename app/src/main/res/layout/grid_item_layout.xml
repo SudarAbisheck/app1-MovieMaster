@@ -15,10 +15,10 @@
     <LinearLayout
         android:id="@+id/selected_item"
         android:layout_width="match_parent"
-        android:layout_height="15dp"
+        android:layout_height="10dp"
         android:orientation="horizontal"
         android:layout_alignParentBottom="true"
-        android:visibility="invisible"
-        android:background="#345333"/>
+        android:visibility="gone"
+        android:background="@color/colorAccent"/>
 
 </RelativeLayout>

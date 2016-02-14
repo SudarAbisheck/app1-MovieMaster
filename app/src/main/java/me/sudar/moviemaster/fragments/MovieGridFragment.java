@@ -1,6 +1,7 @@
 package me.sudar.moviemaster.fragments;
 
 import android.app.Activity;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -59,6 +60,12 @@ public class MovieGridFragment extends Fragment {
         mRecyclerView.setAdapter(movieGridAdapter);
 
         activity = getActivity();
+        return view;
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
 
         if(savedInstanceState == null){
             loadPopularMovies();
@@ -71,7 +78,6 @@ public class MovieGridFragment extends Fragment {
             view.findViewById(R.id.progressBar).setVisibility(View.GONE);
             view.findViewById(R.id.errorView).setVisibility(View.GONE);
         }
-        return view;
     }
 
     @Override
