@@ -1,30 +1,28 @@
 package me.sudar.moviemaster.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.FrameLayout;
 import android.widget.Toast;
 
 
-import java.util.ArrayList;
-import java.util.List;
-
+import me.sudar.moviemaster.fragments.DetailsActivityFragment;
 import me.sudar.moviemaster.fragments.MovieGridFragment;
-import me.sudar.moviemaster.models.ApiCallReply;
-import me.sudar.moviemaster.MovieMasterApplication;
 import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.models.Movie;
-import me.sudar.moviemaster.network.TmDbService;
-import rx.Subscriber;
-import rx.android.schedulers.AndroidSchedulers;
-import rx.schedulers.Schedulers;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements MovieGridFragment.CallBacks{
 
-//    private MovieGridFragment movieGridFragment = (MovieGridFragment) getSupportFragmentManager().findFragmentById(R.id.movie_grid_fragment);
+    private DetailsActivityFragment detailsActivityFragment;
+    private boolean twoPane = false;
+    private FragmentManager fragmentManager = getSupportFragmentManager();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,50 +31,55 @@ public class MainActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        if(findViewById(R.id.movie_detail_frame) != null){
+            twoPane = true;
+            if(savedInstanceState == null) {
+                Bundle bundle = new Bundle();
+                detailsActivityFragment = new DetailsActivityFragment();
+                detailsActivityFragment.setArguments(bundle);
 
-//        if(savedInstanceState != null){
-//            Toast.makeText(this, "Activity saveInstanceState", Toast.LENGTH_SHORT).show();
-//            movieGridFragment = (MovieGridFragment) getSupportFragmentManager().getFragment(savedInstanceState,"MOVIE_GRID_FRAG");
-//
-//        }else{
-//            Toast.makeText(this, "Activity saveInstanceState null", Toast.LENGTH_SHORT).show();
-//        }
+            }else{
+                detailsActivityFragment = (DetailsActivityFragment) fragmentManager.getFragment(savedInstanceState,"MOVIE_DETAIL_FRAG");
+                Toast.makeText(this, "JJJJJJJ", Toast.LENGTH_SHORT).show();
+
+            }
+//            getSupportFragmentManager()
+//                    .popBackStack();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.movie_detail_frame, detailsActivityFragment)
+//                    .addToBackStack("BACKSTACK")
+                    .commit();
+
+//            fragmentManager.popBackStack();
+        }
+
     }
 
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-//        getSupportFragmentManager().putFragment(outState,"MOVIE_GRID_FRAG", movieGridFragment);
+        fragmentManager.putFragment(outState,"MOVIE_DETAIL_FRAG", detailsActivityFragment);
     }
 
-    //    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        getMenuInflater().inflate(R.menu.menu_main, menu);
-//        MenuItem popMovieMenu = menu.findItem(R.id.action_pop_movies);
-//        MenuItem highRatedMenu = menu.findItem(R.id.action_high_rated_movies);
-//
-//        if(MovieMasterApplication.selectedMenu == 0) {
-//            popMovieMenu.setEnabled(false);
-//        }
-//        else if(MovieMasterApplication.selectedMenu == 1) {
-//            highRatedMenu.setEnabled(false);
-//        }
-//        return true;
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        int id = item.getItemId();
-//
-//        if (id == R.id.action_pop_movies) {
-//            movieGridFragment.loadPopularMovies();
-//            return true;
-//        }else if(id == R.id.action_high_rated_movies){
-//            movieGridFragment.loadHighRatedMovies();
-//            return true;
-//        }
-//
-//        return super.onOptionsItemSelected(item);
-//    }
-
+    @Override
+    public void onItemSelected(Movie movie) {
+        if(twoPane){
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(DetailsActivityFragment.MOVIE_PARCEL,movie);
+            detailsActivityFragment = new DetailsActivityFragment();
+            detailsActivityFragment.setArguments(bundle);
+            fragmentManager
+                    .popBackStack();
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.movie_detail_frame,detailsActivityFragment)
+                    .addToBackStack("BACKSTACK")
+                    .commit();
+        }else{
+            Intent intent = new Intent(this, DetailsActivity.class);
+            intent.putExtra(DetailsActivityFragment.MOVIE_PARCEL,movie);
+            startActivity(intent);
+        }
+    }
 }

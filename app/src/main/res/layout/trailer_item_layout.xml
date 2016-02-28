@@ -21,10 +21,11 @@
         <TextView
             android:id="@+id/trailer_title"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="50dp"
             android:gravity="center"
             android:paddingLeft="2dp"
-            android:paddingRight="2dp"/>
+            android:paddingRight="2dp"
+            android:ellipsize="end"/>
     </LinearLayout>
 
 

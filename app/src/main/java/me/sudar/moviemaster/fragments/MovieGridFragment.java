@@ -29,6 +29,7 @@ import rx.schedulers.Schedulers;
 
 public class MovieGridFragment extends Fragment {
 
+    public static final String SAVED_MOVIE = "SAVED_MOVIE";
     private View view;
     private Activity activity;
 
@@ -36,6 +37,10 @@ public class MovieGridFragment extends Fragment {
     private MenuItem highRatedMenu;
 
     private MovieGridAdapter movieGridAdapter;
+
+    public interface CallBacks{
+        void onItemSelected(Movie movie);
+    }
 
     public MovieGridFragment() {
     }
@@ -51,15 +56,19 @@ public class MovieGridFragment extends Fragment {
                              Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_main, container, false);
 
+        activity = getActivity();
+        if(!(activity instanceof CallBacks))
+            throw new IllegalStateException("Activity must implement fragment's CallBacks Interface.");
+        CallBacks callBacks = (CallBacks) activity; //the activity should have implemented the CallBacks interface
+
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_grid_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         int gridLayoutSpanCount = 2;
         GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), gridLayoutSpanCount);
         mRecyclerView.setLayoutManager(gridLayoutManager);
-        movieGridAdapter = new MovieGridAdapter();
+        movieGridAdapter = new MovieGridAdapter(callBacks);
         mRecyclerView.setAdapter(movieGridAdapter);
 
-        activity = getActivity();
         return view;
     }
 
@@ -71,7 +80,7 @@ public class MovieGridFragment extends Fragment {
             loadPopularMovies();
 //            Toast.makeText(this.getActivity(), "null savedInstanceState", Toast.LENGTH_SHORT).show();
         }else{
-            List<Movie> list = savedInstanceState.getParcelableArrayList("SAVED_MOVIE");
+            List<Movie> list = savedInstanceState.getParcelableArrayList(SAVED_MOVIE);
             view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
             movieGridAdapter.updateData(list);
 //            Toast.makeText(this.getActivity(),"" + list.get(1).getTitle(),Toast.LENGTH_SHORT).show();
@@ -83,7 +92,7 @@ public class MovieGridFragment extends Fragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putParcelableArrayList("SAVED_MOVIE", (ArrayList<Movie>) movieGridAdapter.getData());
+        outState.putParcelableArrayList(SAVED_MOVIE, (ArrayList<Movie>) movieGridAdapter.getData());
     }
 
     public void loadPopularMovies(){

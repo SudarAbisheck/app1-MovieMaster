@@ -14,4 +14,5 @@
     <string name="reviews">Reviews :</string>
     <string name="trailer_play_image">Trailer Play Image</string>
     <string name="review_author_string"><![CDATA[<b>%1$s</b> <i>says :</i>]]></string>
+    <string name="title_string">%title%</string>
 </resources>

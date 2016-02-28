@@ -1,27 +1,28 @@
 package me.sudar.moviemaster.fragments;
 
 import android.app.Activity;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
-import android.support.annotation.StringDef;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.Html;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
 import me.sudar.moviemaster.R;
+import me.sudar.moviemaster.activities.DetailsActivity;
 import me.sudar.moviemaster.adapters.TrailerListAdapter;
 import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.models.Review;
@@ -36,6 +37,8 @@ import rx.schedulers.Schedulers;
 
 public class DetailsActivityFragment extends Fragment {
 
+    public static final String MOVIE_PARCEL = "MOVIE_PARCEL";
+
     private View view;
     private LinearLayout trailerContainer;
     private LinearLayout reviewContainer;
@@ -44,6 +47,7 @@ public class DetailsActivityFragment extends Fragment {
     private TrailerListAdapter trailerListAdapter;
     private ArrayList<Trailer> trailerList = new ArrayList<>();
     private ArrayList<Review> reviewList = new ArrayList<>();
+    private Movie movie;
 
     public DetailsActivityFragment() {
     }
@@ -68,31 +72,83 @@ public class DetailsActivityFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         Activity activity = getActivity();
-        Bundle b = (Bundle) activity.getIntent().getExtras().get("DATA");
 
-        if(b != null) {
-            Movie movie = b.getParcelable("MOVIE");
+        if(savedInstanceState == null) {
+            movie = activity.getIntent().getParcelableExtra(MOVIE_PARCEL);
 
-            activity.setTitle(movie.getTitle());
-
-            Picasso.with(activity).load(TmDbService.BACKDROP_IMAGE_BASE_URL + movie.getBackdropPath())
-                    .into(((ImageView) activity.findViewById(R.id.backdrop_image_view)));
-
-            String releaseYear = movie.getReleaseDate().split("-")[0];
-            ((TextView) view.findViewById(R.id.release_year_text_view)).setText(releaseYear);
-            ((TextView) view.findViewById(R.id.rating_text_view))
-                    .setText(String.format(getString(R.string.rating_string), movie.getVoteAverage()));
-
-            ((TextView) view.findViewById(R.id.plot_text_view)).setText(movie.getOverview());
-
-            Picasso.with(view.getContext()).load(TmDbService.IMAGE_BASE_URL + movie.getPosterPath())
-                    .placeholder(R.drawable.placeholder)
-                    .error(R.drawable.placeholder).into(((ImageView) view.findViewById(R.id.poster_image_view)));
-
-            loadTrailers(movie.getId());
-            loadReviews(movie.getId());
+            if (movie != null) {
+                setScreen(movie, activity);
+                loadTrailers(movie.getId());
+                loadReviews(movie.getId());
+            }else if(getArguments().containsKey(MOVIE_PARCEL)) {
+                movie = getArguments().getParcelable(MOVIE_PARCEL);
+                if (movie != null) {
+                    setScreen(movie, activity);
+                    loadTrailers(movie.getId());
+                    loadReviews(movie.getId());
+                }
+            }
+        }else{
+            Toast.makeText(activity, "iiiiiiiii", Toast.LENGTH_SHORT).show();
+            movie = savedInstanceState.getParcelable(MOVIE_PARCEL);
+            if (movie != null) {
+                setScreen(movie, activity);
+            }
+            ArrayList<Trailer> trailerListTemp =  savedInstanceState.getParcelableArrayList("MOVIE_TRAILER_LIST");
+            trailerListAdapter.updateData(trailerListTemp);
+            if(trailerListTemp.size() > 0)
+                trailerContainer.setVisibility(View.VISIBLE);
+            ArrayList<Review> reviewListTemp =  savedInstanceState.getParcelableArrayList("MOVIE_REVIEW_LIST");
+            updateReview(reviewListTemp);
+            if(reviewListTemp.size() > 0)
+                reviewContainer.setVisibility(View.VISIBLE);
         }
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putParcelable(MOVIE_PARCEL, movie);
+        outState.putParcelableArrayList("MOVIE_TRAILER_LIST", trailerList);
+        outState.putParcelableArrayList("MOVIE_REVIEW_LIST", reviewList);
+    }
+
+    public void setScreen(Movie movie, Activity activity){
+
+        if(activity instanceof DetailsActivity) {
+            Picasso.with(activity).load(TmDbService.BACKDROP_IMAGE_BASE_URL + movie.getBackdropPath())
+                    .into(((ImageView) activity.findViewById(R.id.backdrop_image_view)));
+            activity.setTitle(movie.getTitle());
+        }else{
+            TextView titleTextView = (TextView) activity.findViewById(R.id.title_text_view);
+            titleTextView.setVisibility(View.VISIBLE);
+            titleTextView.setText(movie.getTitle());
+        }
+
+        String releaseYear = movie.getReleaseDate().split("-")[0];
+        ((TextView) view.findViewById(R.id.release_year_text_view)).setText(releaseYear);
+        ((TextView) view.findViewById(R.id.rating_text_view))
+                .setText(String.format(getString(R.string.rating_string), movie.getVoteAverage()));
+
+        ((TextView) view.findViewById(R.id.plot_text_view)).setText(movie.getOverview());
+
+        Picasso.with(view.getContext()).load(TmDbService.IMAGE_BASE_URL + movie.getPosterPath())
+                .placeholder(R.drawable.placeholder)
+                .error(R.drawable.placeholder).into(((ImageView) view.findViewById(R.id.poster_image_view)));
+    }
+
+    public void updateReview(ArrayList<Review> reviewList){
+        for(int i = 0; i< reviewList.size(); i++) {
+            String raw = String.format(getString(R.string.review_author_string),reviewList.get(i).getAuthor());
+
+            CardView cv = (CardView) LayoutInflater.from(view.getContext()).inflate(R.layout.review_item_layout, reviewListLL, false);
+            ((TextView) cv.findViewById(R.id.review_author_tv)).setText(Html.fromHtml(raw));
+            ((TextView) cv.findViewById(R.id.review_content_tv)).setText(reviewList.get(i).getContent());
+
+            reviewListLL.addView(cv);
+        }
+    }
+
 
     public void loadTrailers(Integer id){
         TmDbService
@@ -142,16 +198,7 @@ public class DetailsActivityFragment extends Fragment {
                     @Override
                     public void onNext(ReviewReply reviewReply) {
                         reviewList = (ArrayList<Review>) reviewReply.getReviews();
-
-                        for(int i = 0; i< reviewList.size(); i++) {
-                            String raw = String.format(getString(R.string.review_author_string),reviewList.get(i).getAuthor());
-
-                            CardView cv = (CardView) LayoutInflater.from(view.getContext()).inflate(R.layout.review_item_layout, reviewListLL, false);
-                            ((TextView) cv.findViewById(R.id.review_author_tv)).setText(Html.fromHtml(raw));
-                            ((TextView) cv.findViewById(R.id.review_content_tv)).setText(reviewList.get(i).getContent());
-
-                            reviewListLL.addView(cv);
-                        }
+                        updateReview(reviewList);
                     }
                 });
 

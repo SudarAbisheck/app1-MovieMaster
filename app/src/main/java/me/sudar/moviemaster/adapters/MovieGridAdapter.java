@@ -16,6 +16,7 @@ import java.util.List;
 import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.activities.DetailsActivity;
 import me.sudar.moviemaster.activities.MainActivity;
+import me.sudar.moviemaster.fragments.MovieGridFragment;
 import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.network.TmDbService;
 
@@ -26,9 +27,11 @@ import me.sudar.moviemaster.network.TmDbService;
 public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
     List<Movie> movies;
+    MovieGridFragment.CallBacks callBacks;
 
-    public MovieGridAdapter(){
+    public MovieGridAdapter(MovieGridFragment.CallBacks callBacks){
         this.movies = new ArrayList<>();
+        this.callBacks = callBacks;
     }
 
     public MovieGridAdapter(List<Movie> movies){
@@ -51,11 +54,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         holder.gridItemCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle data = new Bundle();
-                data.putParcelable("MOVIE",movies.get(position));
-                Intent intent = new Intent(v.getContext(), DetailsActivity.class);
-                intent.putExtra("DATA",data);
-                v.getContext().startActivity(intent);
+                callBacks.onItemSelected(movies.get(position));
             }
         });
     }
