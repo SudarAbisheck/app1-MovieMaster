@@ -89,7 +89,6 @@ public class DetailsActivityFragment extends Fragment {
                 }
             }
         }else{
-            Toast.makeText(activity, "iiiiiiiii", Toast.LENGTH_SHORT).show();
             movie = savedInstanceState.getParcelable(MOVIE_PARCEL);
             if (movie != null) {
                 setScreen(movie, activity);

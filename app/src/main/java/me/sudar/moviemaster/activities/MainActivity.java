@@ -40,18 +40,11 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
 
             }else{
                 detailsActivityFragment = (DetailsActivityFragment) fragmentManager.getFragment(savedInstanceState,"MOVIE_DETAIL_FRAG");
-                Toast.makeText(this, "JJJJJJJ", Toast.LENGTH_SHORT).show();
-
             }
-//            getSupportFragmentManager()
-//                    .popBackStack();
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.movie_detail_frame, detailsActivityFragment)
-//                    .addToBackStack("BACKSTACK")
                     .commit();
-
-//            fragmentManager.popBackStack();
         }
 
     }
@@ -70,11 +63,8 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
             detailsActivityFragment = new DetailsActivityFragment();
             detailsActivityFragment.setArguments(bundle);
             fragmentManager
-                    .popBackStack();
-            fragmentManager
                     .beginTransaction()
                     .replace(R.id.movie_detail_frame,detailsActivityFragment)
-                    .addToBackStack("BACKSTACK")
                     .commit();
         }else{
             Intent intent = new Intent(this, DetailsActivity.class);
