@@ -3,7 +3,6 @@ package me.sudar.moviemaster.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
@@ -52,7 +51,8 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        fragmentManager.putFragment(outState,"MOVIE_DETAIL_FRAG", detailsActivityFragment);
+        if(twoPane)
+            fragmentManager.putFragment(outState,"MOVIE_DETAIL_FRAG", detailsActivityFragment);
     }
 
     @Override
@@ -70,6 +70,20 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
             Intent intent = new Intent(this, DetailsActivity.class);
             intent.putExtra(DetailsActivityFragment.MOVIE_PARCEL,movie);
             startActivity(intent);
+        }
+    }
+
+    @Override
+    public void onListLoaded(Movie firstInTheList) {
+        if(twoPane) {
+            Bundle bundle = new Bundle();
+            bundle.putParcelable(DetailsActivityFragment.MOVIE_PARCEL, firstInTheList);
+            detailsActivityFragment = new DetailsActivityFragment();
+            detailsActivityFragment.setArguments(bundle);
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.movie_detail_frame, detailsActivityFragment)
+                    .commit();
         }
     }
 }

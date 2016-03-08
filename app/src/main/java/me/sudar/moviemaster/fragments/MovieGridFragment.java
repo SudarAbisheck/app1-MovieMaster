@@ -22,6 +22,7 @@ import me.sudar.moviemaster.adapters.MovieGridAdapter;
 import me.sudar.moviemaster.models.ApiCallReply;
 import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.network.TmDbService;
+import me.sudar.moviemaster.views.AutoFitRecyclerView;
 import rx.Subscriber;
 import rx.android.schedulers.AndroidSchedulers;
 import rx.schedulers.Schedulers;
@@ -37,9 +38,11 @@ public class MovieGridFragment extends Fragment {
     private MenuItem highRatedMenu;
 
     private MovieGridAdapter movieGridAdapter;
+    private CallBacks callBacks = null;
 
     public interface CallBacks{
         void onItemSelected(Movie movie);
+        void onListLoaded(Movie firstInTheList);
     }
 
     public MovieGridFragment() {
@@ -59,13 +62,10 @@ public class MovieGridFragment extends Fragment {
         activity = getActivity();
         if(!(activity instanceof CallBacks))
             throw new IllegalStateException("Activity must implement fragment's CallBacks Interface.");
-        CallBacks callBacks = (CallBacks) activity; //the activity should have implemented the CallBacks interface
+        callBacks = (CallBacks) activity; //the activity should have implemented the CallBacks interface
 
         RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_grid_recycler_view);
         mRecyclerView.setHasFixedSize(true);
-        int gridLayoutSpanCount = 2;
-        GridLayoutManager gridLayoutManager = new GridLayoutManager(view.getContext(), gridLayoutSpanCount);
-        mRecyclerView.setLayoutManager(gridLayoutManager);
         movieGridAdapter = new MovieGridAdapter(callBacks);
         mRecyclerView.setAdapter(movieGridAdapter);
 
@@ -126,6 +126,7 @@ public class MovieGridFragment extends Fragment {
                     @Override
                     public void onNext(ApiCallReply apiCallReply) {
                         movieGridAdapter.updateData(apiCallReply.getMovies());
+                        callBacks.onListLoaded(apiCallReply.getMovies().get(0));
                     }
                 });
     }
@@ -161,6 +162,7 @@ public class MovieGridFragment extends Fragment {
                     @Override
                     public void onNext(ApiCallReply apiCallReply) {
                         movieGridAdapter.updateData(apiCallReply.getMovies());
+                        callBacks.onListLoaded(apiCallReply.getMovies().get(0));
                     }
                 });
     }
