@@ -1,7 +1,6 @@
 package me.sudar.moviemaster.fragments;
 
 import android.app.Activity;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
@@ -15,7 +14,6 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.squareup.picasso.Picasso;
 
@@ -93,13 +91,13 @@ public class DetailsActivityFragment extends Fragment {
             if (movie != null) {
                 setScreen(movie, activity);
             }
-            ArrayList<Trailer> trailerListTemp =  savedInstanceState.getParcelableArrayList("MOVIE_TRAILER_LIST");
-            trailerListAdapter.updateData(trailerListTemp);
-            if(trailerListTemp.size() > 0)
+            trailerList =  savedInstanceState.getParcelableArrayList("MOVIE_TRAILER_LIST");
+            trailerListAdapter.updateData(trailerList);
+            if(trailerList.size() > 0)
                 trailerContainer.setVisibility(View.VISIBLE);
-            ArrayList<Review> reviewListTemp =  savedInstanceState.getParcelableArrayList("MOVIE_REVIEW_LIST");
-            updateReview(reviewListTemp);
-            if(reviewListTemp.size() > 0)
+            reviewList =  savedInstanceState.getParcelableArrayList("MOVIE_REVIEW_LIST");
+            updateReview(reviewList);
+            if(reviewList.size() > 0)
                 reviewContainer.setVisibility(View.VISIBLE);
         }
     }
