@@ -31,12 +31,14 @@ import rx.schedulers.Schedulers;
 public class MovieGridFragment extends Fragment {
 
     public static final String SAVED_MOVIE = "SAVED_MOVIE";
+    public static final String SELECTED_ITEM = "SELECTED_ITEM";
     private View view;
     private Activity activity;
 
     private MenuItem popMovieMenu;
     private MenuItem highRatedMenu;
 
+    private RecyclerView mRecyclerView;
     private MovieGridAdapter movieGridAdapter;
     private CallBacks callBacks = null;
 
@@ -64,7 +66,7 @@ public class MovieGridFragment extends Fragment {
             throw new IllegalStateException("Activity must implement fragment's CallBacks Interface.");
         callBacks = (CallBacks) activity; //the activity should have implemented the CallBacks interface
 
-        RecyclerView mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_grid_recycler_view);
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.movie_grid_recycler_view);
         mRecyclerView.setHasFixedSize(true);
         movieGridAdapter = new MovieGridAdapter(callBacks);
         mRecyclerView.setAdapter(movieGridAdapter);
@@ -81,8 +83,10 @@ public class MovieGridFragment extends Fragment {
 //            Toast.makeText(this.getActivity(), "null savedInstanceState", Toast.LENGTH_SHORT).show();
         }else{
             List<Movie> list = savedInstanceState.getParcelableArrayList(SAVED_MOVIE);
+            int selectedItem = savedInstanceState.getInt(SELECTED_ITEM);
             view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
             movieGridAdapter.updateData(list);
+            movieGridAdapter.changeSelectedItem(selectedItem);
 //            Toast.makeText(this.getActivity(),"" + list.get(1).getTitle(),Toast.LENGTH_SHORT).show();
             view.findViewById(R.id.progressBar).setVisibility(View.GONE);
             view.findViewById(R.id.errorView).setVisibility(View.GONE);
@@ -93,6 +97,7 @@ public class MovieGridFragment extends Fragment {
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putParcelableArrayList(SAVED_MOVIE, (ArrayList<Movie>) movieGridAdapter.getData());
+        outState.putInt(SELECTED_ITEM, movieGridAdapter.getSelectedItem());
     }
 
     public void loadPopularMovies(){
@@ -126,6 +131,8 @@ public class MovieGridFragment extends Fragment {
                     @Override
                     public void onNext(ApiCallReply apiCallReply) {
                         movieGridAdapter.updateData(apiCallReply.getMovies());
+                        movieGridAdapter.changeSelectedItem(0);
+                        ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
                         callBacks.onListLoaded(apiCallReply.getMovies().get(0));
                     }
                 });
@@ -162,11 +169,16 @@ public class MovieGridFragment extends Fragment {
                     @Override
                     public void onNext(ApiCallReply apiCallReply) {
                         movieGridAdapter.updateData(apiCallReply.getMovies());
+                        movieGridAdapter.changeSelectedItem(0);
+                        ((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
                         callBacks.onListLoaded(apiCallReply.getMovies().get(0));
                     }
                 });
     }
 
+    public void setSelectedItem(boolean option){
+        movieGridAdapter.setSelectedItem(option);
+    }
 
     @Override
     public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {

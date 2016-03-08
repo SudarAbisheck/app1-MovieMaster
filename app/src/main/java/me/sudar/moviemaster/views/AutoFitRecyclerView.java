@@ -6,7 +6,6 @@ import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.AttributeSet;
-import android.util.Log;
 
 /**
  * Created by sudar on 8/3/16.
@@ -42,12 +41,12 @@ public class AutoFitRecyclerView extends RecyclerView {
         gridLayoutManager = new GridLayoutManager(context,1);
         setLayoutManager(gridLayoutManager);
     }
+
     @Override
     protected void onMeasure(int widthSpec, int heightSpec) {
         super.onMeasure(widthSpec, heightSpec);
         if(columnWidth > 0){
             int spanCount = Math.max(1,getMeasuredWidth() / columnWidth);
-            Log.d("TTTTTTTTTTT", "inside custom onmeasure   " + spanCount + " " + getMeasuredWidth());
             gridLayoutManager.setSpanCount(spanCount);
         }
     }

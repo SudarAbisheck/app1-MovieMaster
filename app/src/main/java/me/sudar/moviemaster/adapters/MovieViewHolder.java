@@ -3,7 +3,6 @@ package me.sudar.moviemaster.adapters;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 
 import me.sudar.moviemaster.R;
@@ -15,12 +14,10 @@ import me.sudar.moviemaster.R;
 public class MovieViewHolder extends RecyclerView.ViewHolder {
     RelativeLayout gridItemCardView;
     ImageView moviePoster;
-    LinearLayout selectedItem;
 
     public MovieViewHolder(View itemView) {
         super(itemView);
         gridItemCardView = (RelativeLayout) itemView.findViewById(R.id.grid_item);
         moviePoster = (ImageView) itemView.findViewById(R.id.movie_poster_image_view);
-        selectedItem = (LinearLayout) itemView.findViewById(R.id.selected_item);
     }
 }

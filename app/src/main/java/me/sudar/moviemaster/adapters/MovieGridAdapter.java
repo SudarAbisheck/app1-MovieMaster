@@ -26,16 +26,16 @@ import me.sudar.moviemaster.network.TmDbService;
  */
 public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
 
-    List<Movie> movies;
-    MovieGridFragment.CallBacks callBacks;
+    private List<Movie> movies;
+    private MovieGridFragment.CallBacks callBacks;
+    private boolean setSelectedItem;
+    private int selectedItem;
 
     public MovieGridAdapter(MovieGridFragment.CallBacks callBacks){
         this.movies = new ArrayList<>();
         this.callBacks = callBacks;
-    }
-
-    public MovieGridAdapter(List<Movie> movies){
-        this.movies = movies;
+        this.setSelectedItem = false;
+        this.selectedItem = 0;
     }
 
     @Override
@@ -45,7 +45,7 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(MovieViewHolder holder, final int position) {
+    public void onBindViewHolder(final MovieViewHolder holder, int position) {
         Picasso.with(holder.moviePoster.getContext())
                 .load(TmDbService.IMAGE_BASE_URL + movies.get(position).getPosterPath())
                 .placeholder(R.drawable.placeholder)
@@ -54,9 +54,19 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         holder.gridItemCardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                callBacks.onItemSelected(movies.get(position));
+                callBacks.onItemSelected(movies.get(holder.getAdapterPosition()));
+                if(setSelectedItem) {
+                    selectedItem = holder.getAdapterPosition();
+                    notifyDataSetChanged();
+                }
             }
         });
+        if(setSelectedItem) {
+            if (position == selectedItem)
+                holder.gridItemCardView.setActivated(true);
+            else
+                holder.gridItemCardView.setActivated(false);
+        }
     }
 
     @Override
@@ -68,6 +78,19 @@ public class MovieGridAdapter extends RecyclerView.Adapter<MovieViewHolder> {
         this.movies.clear();
         this.movies.addAll(movies);
         notifyDataSetChanged();
+    }
+
+    public void setSelectedItem(boolean option){
+        setSelectedItem = option;
+        notifyDataSetChanged();
+    }
+
+    public void changeSelectedItem(int position){
+        selectedItem = position;
+    }
+
+    public int getSelectedItem(){
+        return selectedItem;
     }
 
     public List<Movie> getData(){ return this.movies; }

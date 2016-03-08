@@ -44,6 +44,10 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
                     .beginTransaction()
                     .replace(R.id.movie_detail_frame, detailsActivityFragment)
                     .commit();
+
+            MovieGridFragment movieGridFragment = (MovieGridFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.movie_grid_fragment);
+            movieGridFragment.setSelectedItem(true);
         }
 
     }
