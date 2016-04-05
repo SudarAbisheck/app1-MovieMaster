@@ -15,4 +15,10 @@
     <string name="trailer_play_image">Trailer Play Image</string>
     <string name="review_author_string"><![CDATA[<b>%1$s</b> <i>says :</i>]]></string>
     <string name="title_string">%title%</string>
+    <string name="favorite_movies">Favorites</string>
+    <string name="favorite_toggle_button_content_desc">Favorite Toggle Button</string>
+    <string name="nothing_found">Nothing Found :(</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

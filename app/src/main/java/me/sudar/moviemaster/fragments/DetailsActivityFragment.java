@@ -4,6 +4,8 @@ import android.app.Activity;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v4.widget.ContentLoadingProgressBar;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -22,6 +24,7 @@ import java.util.ArrayList;
 import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.activities.DetailsActivity;
 import me.sudar.moviemaster.adapters.TrailerListAdapter;
+import me.sudar.moviemaster.database.FavMovieDB;
 import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.models.Review;
 import me.sudar.moviemaster.models.ReviewReply;
@@ -38,14 +41,20 @@ public class DetailsActivityFragment extends Fragment {
     public static final String MOVIE_PARCEL = "MOVIE_PARCEL";
 
     private View view;
-    private LinearLayout trailerContainer;
-    private LinearLayout reviewContainer;
+    private ContentLoadingProgressBar trailerProgressBar;
+    private TextView trailerInfoView;
+    private RecyclerView trailerListView;
+
+    private ContentLoadingProgressBar reviewProgressBar;
+    private TextView reviewInfoView;
     private LinearLayout reviewListLL;
+    private ImageView favToggle;
 
     private TrailerListAdapter trailerListAdapter;
     private ArrayList<Trailer> trailerList = new ArrayList<>();
     private ArrayList<Review> reviewList = new ArrayList<>();
     private Movie movie;
+    private FavMovieDB db;
 
     public DetailsActivityFragment() {
     }
@@ -54,14 +63,21 @@ public class DetailsActivityFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         view =  inflater.inflate(R.layout.fragment_details, container, false);
-        trailerContainer = (LinearLayout) view.findViewById(R.id.trailer_container);
-        RecyclerView trailerListView = (RecyclerView) view.findViewById(R.id.trailer_list_view);
+
+        trailerListView = (RecyclerView) view.findViewById(R.id.trailer_list_view);
+        trailerProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.trailerProgressBar);
+        trailerInfoView = (TextView) view.findViewById(R.id.trailerInfoView);
+
         trailerListView.setLayoutManager(new LinearLayoutManager(view.getContext(), LinearLayoutManager.HORIZONTAL, false));
         trailerListAdapter = new TrailerListAdapter();
         trailerListView.setAdapter(trailerListAdapter);
 
-        reviewContainer = (LinearLayout) view.findViewById(R.id.review_container);
         reviewListLL = (LinearLayout) view.findViewById(R.id.review_list_linear_layout);
+        reviewProgressBar = (ContentLoadingProgressBar) view.findViewById(R.id.reviewProgressBar);
+        reviewInfoView = (TextView) view.findViewById(R.id.reviewInfoView);
+
+        db = new FavMovieDB(view.getContext());
+        favToggle = (ImageView) view.findViewById(R.id.fav_toggle);
         return view;
     }
 
@@ -93,12 +109,23 @@ public class DetailsActivityFragment extends Fragment {
             }
             trailerList =  savedInstanceState.getParcelableArrayList("MOVIE_TRAILER_LIST");
             trailerListAdapter.updateData(trailerList);
+            trailerProgressBar.setVisibility(View.GONE);
             if(trailerList.size() > 0)
-                trailerContainer.setVisibility(View.VISIBLE);
+                trailerListView.setVisibility(View.VISIBLE);
+            else if (trailerList.size() == 0){
+                trailerInfoView.setVisibility(View.VISIBLE);
+                trailerInfoView.setText(getResources().getString(R.string.nothing_found));
+            }
+
             reviewList =  savedInstanceState.getParcelableArrayList("MOVIE_REVIEW_LIST");
             updateReview(reviewList);
+            reviewProgressBar.setVisibility(View.GONE);
             if(reviewList.size() > 0)
-                reviewContainer.setVisibility(View.VISIBLE);
+                reviewListLL.setVisibility(View.VISIBLE);
+            else if (reviewList.size() == 0 ){
+                reviewInfoView.setVisibility(View.VISIBLE);
+                reviewInfoView.setText(getResources().getString(R.string.nothing_found));
+            }
         }
     }
 
@@ -110,7 +137,7 @@ public class DetailsActivityFragment extends Fragment {
         outState.putParcelableArrayList("MOVIE_REVIEW_LIST", reviewList);
     }
 
-    public void setScreen(Movie movie, Activity activity){
+    public void setScreen(final Movie movie, Activity activity){
 
         if(activity instanceof DetailsActivity) {
             Picasso.with(activity).load(TmDbService.BACKDROP_IMAGE_BASE_URL + movie.getBackdropPath())
@@ -132,6 +159,24 @@ public class DetailsActivityFragment extends Fragment {
         Picasso.with(view.getContext()).load(TmDbService.IMAGE_BASE_URL + movie.getPosterPath())
                 .placeholder(R.drawable.placeholder)
                 .error(R.drawable.placeholder).into(((ImageView) view.findViewById(R.id.poster_image_view)));
+
+        if(db.isPresent(movie.getId()))
+            favToggle.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.heart_filled));
+        else
+            favToggle.setImageDrawable(ContextCompat.getDrawable(activity, R.drawable.heart));
+
+        favToggle.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(db.isPresent(movie.getId())){
+                    db.removeMovie(movie.getId());
+                    favToggle.setImageDrawable(ContextCompat.getDrawable(v.getContext(), R.drawable.heart));
+                }else{
+                    db.insertMovie(movie);
+                    favToggle.setImageDrawable(ContextCompat.getDrawable(v.getContext(), R.drawable.heart_filled));
+                }
+            }
+        });
     }
 
     public void updateReview(ArrayList<Review> reviewList){
@@ -157,12 +202,20 @@ public class DetailsActivityFragment extends Fragment {
                 .subscribe(new Subscriber<TrailerReply>() {
                     @Override
                     public void onCompleted() {
+                        trailerProgressBar.setVisibility(View.GONE);
                         if(trailerList.size() > 0)
-                            trailerContainer.setVisibility(View.VISIBLE);
+                            trailerListView.setVisibility(View.VISIBLE);
+                        else if (trailerList.size() == 0){
+                            trailerInfoView.setVisibility(View.VISIBLE);
+                            trailerInfoView.setText(getResources().getString(R.string.nothing_found));
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        trailerProgressBar.setVisibility(View.GONE);
+                        trailerInfoView.setVisibility(View.VISIBLE);
+                        trailerInfoView.setText(getResources().getString(R.string.internet_error_message));
                     }
 
                     @Override
@@ -184,12 +237,20 @@ public class DetailsActivityFragment extends Fragment {
                 .subscribe(new Subscriber<ReviewReply>() {
                     @Override
                     public void onCompleted() {
+                        reviewProgressBar.setVisibility(View.GONE);
                         if(reviewList.size() > 0)
-                            reviewContainer.setVisibility(View.VISIBLE);
+                            reviewListLL.setVisibility(View.VISIBLE);
+                        else if (reviewList.size() == 0 ){
+                            reviewInfoView.setVisibility(View.VISIBLE);
+                            reviewInfoView.setText(getResources().getString(R.string.nothing_found));
+                        }
                     }
 
                     @Override
                     public void onError(Throwable e) {
+                        reviewProgressBar.setVisibility(View.GONE);
+                        reviewInfoView.setVisibility(View.VISIBLE);
+                        reviewInfoView.setText(getResources().getText(R.string.internet_error_message));
                     }
 
                     @Override

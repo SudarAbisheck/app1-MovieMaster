@@ -19,6 +19,7 @@ import java.util.List;
 import me.sudar.moviemaster.MovieMasterApplication;
 import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.adapters.MovieGridAdapter;
+import me.sudar.moviemaster.database.FavMovieDB;
 import me.sudar.moviemaster.models.ApiCallReply;
 import me.sudar.moviemaster.models.Movie;
 import me.sudar.moviemaster.network.TmDbService;
@@ -37,6 +38,7 @@ public class MovieGridFragment extends Fragment {
 
     private MenuItem popMovieMenu;
     private MenuItem highRatedMenu;
+    private MenuItem favMovieMenu;
 
     private RecyclerView mRecyclerView;
     private MovieGridAdapter movieGridAdapter;
@@ -45,6 +47,7 @@ public class MovieGridFragment extends Fragment {
     public interface CallBacks{
         void onItemSelected(Movie movie);
         void onListLoaded(Movie firstInTheList);
+        void onLoadingFailed();
     }
 
     public MovieGridFragment() {
@@ -115,6 +118,7 @@ public class MovieGridFragment extends Fragment {
                     public void onCompleted() {
                         popMovieMenu.setEnabled(false);
                         highRatedMenu.setEnabled(true);
+                        favMovieMenu.setEnabled(true);
                         MovieMasterApplication.selectedMenu = 0;
                         view.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
                         view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
@@ -126,6 +130,7 @@ public class MovieGridFragment extends Fragment {
                         view.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
                         view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.INVISIBLE);
                         view.findViewById(R.id.errorView).setVisibility(View.VISIBLE);
+                        callBacks.onLoadingFailed();
                     }
 
                     @Override
@@ -153,6 +158,7 @@ public class MovieGridFragment extends Fragment {
                     public void onCompleted() {
                         popMovieMenu.setEnabled(true);
                         highRatedMenu.setEnabled(false);
+                        favMovieMenu.setEnabled(true);
                         MovieMasterApplication.selectedMenu = 1;
                         view.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
                         view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
@@ -164,6 +170,7 @@ public class MovieGridFragment extends Fragment {
                         view.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
                         view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.INVISIBLE);
                         view.findViewById(R.id.errorView).setVisibility(View.VISIBLE);
+                        callBacks.onLoadingFailed();
                     }
 
                     @Override
@@ -176,6 +183,20 @@ public class MovieGridFragment extends Fragment {
                 });
     }
 
+    public void loadFavoriteMovies(){
+        view.findViewById(R.id.errorView).setVisibility(View.GONE);
+        view.findViewById(R.id.progressBar).setVisibility(View.INVISIBLE);
+        view.findViewById(R.id.movie_grid_recycler_view).setVisibility(View.VISIBLE);
+        FavMovieDB db = new FavMovieDB(getContext());
+        ArrayList<Movie> favMovies = db.getAllMovies();
+        movieGridAdapter.updateData(favMovies);
+        movieGridAdapter.changeSelectedItem(0);((GridLayoutManager) mRecyclerView.getLayoutManager()).scrollToPositionWithOffset(0, 0);
+        callBacks.onListLoaded(favMovies.get(0));
+        popMovieMenu.setEnabled(true);
+        highRatedMenu.setEnabled(true);
+        favMovieMenu.setEnabled(false);
+    }
+
     public void setSelectedItem(boolean option){
         movieGridAdapter.setSelectedItem(option);
     }
@@ -185,6 +206,7 @@ public class MovieGridFragment extends Fragment {
         inflater.inflate(R.menu.menu_main, menu);
         popMovieMenu = menu.findItem(R.id.action_pop_movies);
         highRatedMenu = menu.findItem(R.id.action_high_rated_movies);
+        favMovieMenu = menu.findItem(R.id.action_fav_movies);
 
         if(MovieMasterApplication.selectedMenu == 0) {
             popMovieMenu.setEnabled(false);
@@ -203,6 +225,9 @@ public class MovieGridFragment extends Fragment {
             return true;
         }else if(id == R.id.action_high_rated_movies){
             loadHighRatedMovies();
+            return true;
+        }else if(id == R.id.action_fav_movies){
+            loadFavoriteMovies();
             return true;
         }
 

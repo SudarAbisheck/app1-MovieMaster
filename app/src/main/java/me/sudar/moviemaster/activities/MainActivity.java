@@ -5,14 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.Menu;
-import android.view.MenuItem;
-import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.Toast;
 
 
 import me.sudar.moviemaster.fragments.DetailsActivityFragment;
+import me.sudar.moviemaster.fragments.ErrorFragment;
 import me.sudar.moviemaster.fragments.MovieGridFragment;
 import me.sudar.moviemaster.R;
 import me.sudar.moviemaster.models.Movie;
@@ -33,17 +29,20 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
         if(findViewById(R.id.movie_detail_frame) != null){
             twoPane = true;
             if(savedInstanceState == null) {
-                Bundle bundle = new Bundle();
-                detailsActivityFragment = new DetailsActivityFragment();
-                detailsActivityFragment.setArguments(bundle);
+
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.movie_detail_frame, new ErrorFragment())
+                        .commit();
 
             }else{
                 detailsActivityFragment = (DetailsActivityFragment) fragmentManager.getFragment(savedInstanceState,"MOVIE_DETAIL_FRAG");
+
+                fragmentManager
+                        .beginTransaction()
+                        .replace(R.id.movie_detail_frame, detailsActivityFragment)
+                        .commit();
             }
-            fragmentManager
-                    .beginTransaction()
-                    .replace(R.id.movie_detail_frame, detailsActivityFragment)
-                    .commit();
 
             MovieGridFragment movieGridFragment = (MovieGridFragment) getSupportFragmentManager()
                     .findFragmentById(R.id.movie_grid_fragment);
@@ -87,6 +86,16 @@ public class MainActivity extends AppCompatActivity implements MovieGridFragment
             fragmentManager
                     .beginTransaction()
                     .replace(R.id.movie_detail_frame, detailsActivityFragment)
+                    .commit();
+        }
+    }
+
+    @Override
+    public void onLoadingFailed() {
+        if(twoPane){
+            fragmentManager
+                    .beginTransaction()
+                    .replace(R.id.movie_detail_frame, new ErrorFragment())
                     .commit();
         }
     }
